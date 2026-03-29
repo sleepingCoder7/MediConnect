@@ -4,10 +4,15 @@ import bgImage from '../assets/background/MediConnect-Reception-background.png'
 import API from '../api/axios';
 import defaultImage from '../assets/departmentImages/default-doctor.jpg';
 import { toast } from "react-hot-toast";
+import { useSelector, useDispatch } from 'react-redux';
+import { setAppointments, removeAppointment, setLoading } from '../redux/slices/appointmentSlice';
+import { CircularProgress } from '@mui/material';
 
 const MyAppointment = () => {
-  	const [appointments, setAppointments] = useState([]);
   	const [yearFilter, setYearFilter] = useState("");
+    const appointments = useSelector((state) => state.appointment.data);
+	const loading = useSelector((state) => state.appointment.loading);
+    const dispatch = useDispatch();
 
   	useEffect(() => {
     	fetchAppointments(yearFilter);
@@ -15,22 +20,17 @@ const MyAppointment = () => {
 
   	const fetchAppointments = async (year) => {
     	const url = year ? `/appointments?year=${year}` : "/appointments";
+		dispatch(setLoading(true));
     	const response = await API.get(url);
-    	setAppointments(response.data.data);
+    	dispatch(setAppointments(response.data.data));
+		dispatch(setLoading(false));
   	};
-
-	const convertTo12hr = (time) => {
-		const [hours, minutes] = time.split(":");
-		const ampm = hours >= 12 ? "PM" : "AM";
-		const hours12 = hours % 12 || 12;
-		return `${hours12}:${minutes} ${ampm}`;
-	};
 
     const handleCancelAppointment = async (id) => {
 		toast.loading("Canceling appointment...", { id: "cancelAppt" });
 		try {
 			await API.delete(`/appointments/${id}`);
-			setAppointments(appointments.filter((app) => app._id !== id));
+			dispatch(removeAppointment(id));
 			toast.success("Appointment canceled successfully", { id: "cancelAppt" });
 		} catch (error) {
 			toast.error(error.response?.data?.message || "Failed to cancel appointment", { id: "cancelAppt" });
@@ -70,40 +70,49 @@ const MyAppointment = () => {
 
         		{/* Cards */}
         		<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-6'>
-          			{appointments.length === 0 ? (
-						<p className='flex items-center justify-center text-2xl col-span-full text-white bg-black/40 rounded-lg p-6'>No appointments found</p>
+          			{loading ? (
+						<p className='bg-white flex items-center justify-center text-2xl col-span-full text-primary rounded-lg p-6'>
+							Loading&nbsp;&nbsp;&nbsp; 
+							<CircularProgress />
+						</p>
+					) : appointments.length === 0 ? (
+						<p className='bg-white flex items-center justify-center text-2xl col-span-full text-primary rounded-lg p-6'>No appointments found</p>
 					) : (
-						appointments.map((appointment) => (
-						<div key={appointment._id} className='bg-white p-6 rounded shadow-md w-full flex flex-col h-full'>
-							<img src={appointment.departmentId?.image || defaultImage} alt="doctor" className="w-full h-64 object-center rounded-md mb-4" />
-							<div className="grow">
-                                <p><strong>Department:</strong> {appointment.departmentId?.name}</p>
-                                <p><strong>Date:</strong> {appointment.appointmentDate?.toString().slice(0, 10)}</p>
-								<p><strong>Time:</strong> {convertTo12hr(appointment.appointmentDate?.toString().slice(11, 16))}</p>
-								<p><strong>Comments:</strong> {appointment.comments}</p>
+						appointments.map((appointment) => {
+							const date = new Date(appointment.appointmentDate);
 
-								{/* Reports */}
-								<p><strong>Reports:</strong></p>
-								{appointment.reports.length > 0 ? (
-									appointment.reports.map((report) => (
-										<a className='text-blue-500 underline break-all' key={report._id} href={report.url} target="_blank" rel="noreferrer">{report.public_id?.split("/")?.pop() || 'View Report'}</a>
-									))
-								) : (
-									<p>No reports found</p>
-								)}
-							</div>
+							return (
+								<div key={appointment._id} className='bg-white p-6 rounded shadow-md w-full flex flex-col h-full'>
+									<img src={appointment.departmentId?.image || defaultImage} alt="doctor" className="w-full h-64 object-center rounded-md mb-4" />
+									<div className="grow">
+                                        <p><strong>Department:</strong> {appointment.departmentId?.name}</p>
+                                        <p><strong>Date:</strong> {date.toLocaleDateString("en-IN", {day: "2-digit", month: "short", year: "numeric"})}</p>
+										<p><strong>Time:</strong> {date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: true})}</p>
+										<p><strong>Comments:</strong> {appointment.comments}</p>
+
+										{/* Reports */}
+										<p><strong>Reports:</strong></p>
+										{appointment.reports?.length > 0 ? (
+											appointment.reports.map((report) => (
+												<a className='text-blue-500 underline break-all' key={report._id} href={report.url} target="_blank" rel="noreferrer">{report.public_id?.split("/")?.pop() || 'View Report'}</a>
+											))
+										) : (
+											<p>No reports found</p>
+										)}
+									</div>
 							
-							<div className='flex justify-center'>
-                            <button 
-                                className='mt-4 bg-gray-500 hover:bg-red-500 text-white py-2 px-4 rounded transition-colors duration-300 cursor-pointer'
-                                onClick={() => handleCancelAppointment(appointment._id)}
-                            >
-                                Cancel Appointment
-                            </button>
-							</div>
-						</div>
-          				))
-					)}
+									<div className='flex justify-center'>
+										<button 
+											className='mt-4 bg-gray-500 hover:bg-red-500 text-white py-2 px-4 rounded transition-colors duration-300 cursor-pointer'
+											onClick={() => handleCancelAppointment(appointment._id)}
+										>
+											Cancel Appointment
+										</button>
+									</div>
+								</div>
+          					)
+						}
+					))}
         		</div>
       		</main>
     	</div>
