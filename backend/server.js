@@ -29,7 +29,14 @@ app.use("/api/appointments", appointmentRoutes);
 
 // Health Check
 app.get("/health", (req, res) => {
-    res.status(200).json({ status: "OK", uptime: process.uptime(), timestamp: Date.now() });
+    function formatUptime(seconds) {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+
+        return `${hrs}h ${mins}m ${secs}s`;
+    }
+    res.status(200).json({ status: "OK", uptime: formatUptime(process.uptime()), timestamp: new Date().toISOString() });
 });
 
 // Port
