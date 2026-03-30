@@ -27,8 +27,9 @@ app.use("/api/user", userRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/appointments", appointmentRoutes);
 
-app.get("/", (req, res) => {
-    res.send("MediConnect API is running 🚀");
+// Health Check
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "OK", uptime: process.uptime(), timestamp: Date.now() });
 });
 
 // Port
