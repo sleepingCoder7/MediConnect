@@ -16,7 +16,6 @@ const Sidebar = () => {
         toast.loading("Logging out...", {
             id: "logout",
         });
-        localStorage.removeItem("user");
         await API.post("/auth/logout", {});
         setUser(null);
         toast.success("Logout successful", {

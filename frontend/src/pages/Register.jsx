@@ -4,6 +4,8 @@ import bgImage from '../assets/background/MediConnect-Reception-background.png'
 import toast from 'react-hot-toast';
 import { FiEye, FiEyeOff } from "react-icons/fi"
 import API from '../api/axios';
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
 	const navigate = useNavigate();
@@ -17,6 +19,7 @@ const Register = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [loading, setLoading] = useState(false)
+	const {setUser} = useAuth();
 
 	const handleChange = (e) => {
 		setFormData({
@@ -92,6 +95,37 @@ const Register = () => {
 					</span>
 				</div>
                 <button className={`py-2 rounded-lg font-medium transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-accent text-white"} cursor-pointer`} type='submit' disabled={loading}>{loading ? "Registering..." : "Register"}</button>
+				<div className='flex items-center justify-center'>
+					<div className='w-full border-t border-gray-300'></div>
+					<span className='px-4 text-gray-500'>or</span>
+					<div className='w-full border-t border-gray-300'></div>
+				</div>
+
+				{/* Google Login */}
+				<div className='flex items-center justify-center'>
+					<button type="button">
+						<GoogleLogin
+							onSuccess={async (credentialResponse) => {
+								try{
+									toast.loading("Signing up...", {id: "register"});
+									const res = await API.post("/auth/google", {
+										token: credentialResponse.credential
+									});
+
+									setUser(res.data.user);
+									toast.success("Registration successful", {id: "register"});
+									navigate("/dashboard");
+								}catch(error){
+									console.log(error);
+									toast.error("Registration failed", {id: "register"});
+								}
+							}}
+							onError={() => {
+									console.log('Google Login Failed');
+							}}
+						/>
+					</button>
+				</div>
             </form>
 			{/* Footer */}
 			<p className='text-center text-gray-600 mt-4'>

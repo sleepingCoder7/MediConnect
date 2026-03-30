@@ -6,7 +6,7 @@ MediConnect is a modern, full-stack web application designed to seamlessly conne
 
 ## ✨ Features
 
-- **User Authentication:** Secure registration and login using JWT (JSON Web Tokens) and HTTP-only cookies.
+- **User Authentication:** Secure registration and login using JWT (JSON Web Tokens) and HTTP-only cookies, featuring **Google OAuth** for quick social sign-in.
 - **Appointment Booking:** Users can easily book doctor appointments for multiple departments.
 - **Personalized Dashboard:** A dedicated space for users to manage their profile and track up-to-date upcoming and past appointments.
 - **Secure File Uploads:** Uploads for medical documents handled securely through **Cloudinary** and **Multer**.
@@ -30,7 +30,7 @@ MediConnect is a modern, full-stack web application designed to seamlessly conne
 ### Backend
 - **Framework:** [Node.js](https://nodejs.org/) & [Express 5](https://expressjs.com/)
 - **Database:** [MongoDB](https://www.mongodb.com/) & [Mongoose](https://mongoosejs.com/)
-- **Authentication:** `jsonwebtoken` (JWT), `bcryptjs`, `cookie-parser`
+- **Authentication:** `jsonwebtoken` (JWT), `bcryptjs`, `cookie-parser`, **Google OAuth 2.0**
 - **File Uploads:** `multer`, `cloudinary`
 - **Other utilities:** `dotenv`, `cors`
 
@@ -44,6 +44,7 @@ Follow these instructions to set up the project locally on your machine.
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
 - A [MongoDB](https://www.mongodb.com/) account/database URI
 - A [Cloudinary](https://cloudinary.com/) account for image & document hosting
+- Google Cloud Console set up with OAuth credentials (Client ID and Secret)
 
 ### 1. Clone the Repository
 ```bash
@@ -85,6 +86,10 @@ FRONTEND_URL=http://localhost:5173
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
+
+# Google
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
 Navigate to the `frontend/` directory and create a `.env` file based on the environment structure:
@@ -92,6 +97,7 @@ Navigate to the `frontend/` directory and create a `.env` file based on the envi
 ```env
 # frontend/.env
 VITE_API_URL=http://localhost:5000/api
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
 ### 4. Run the Application

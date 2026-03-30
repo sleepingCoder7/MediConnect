@@ -1,11 +1,12 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import bgImage from '../assets/background/MediConnect-Building-background.png'
 import { FiEye, FiEyeOff } from "react-icons/fi"
 import API from '../api/axios'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
+import { GoogleLogin } from '@react-oauth/google'
 
 const Login = () => {
 	const [formData, setFormData] = useState({
@@ -13,7 +14,6 @@ const Login = () => {
 		password: ""
 	});
 	const navigate = useNavigate();
-	const location = useLocation();
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
@@ -39,7 +39,6 @@ const Login = () => {
 			})
 
 			setLoading(false);
-			localStorage.setItem("user", JSON.stringify(response.data.user));
 			toast.success("Login successful");
 			setUser(response.data.user);
 			navigate("/dashboard");
@@ -85,6 +84,38 @@ const Login = () => {
 					</span>
                 </div>
                 <button className={`w-full py-2 rounded-lg font-medium transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-accent text-white"} cursor-pointer`} type='submit' disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
+				<div className='flex items-center justify-center'>
+					<div className='w-full border-t border-gray-300'></div>
+					<span className='px-4 text-gray-500'>or</span>
+					<div className='w-full border-t border-gray-300'></div>
+				</div>
+
+				{/* Google Login */}
+				<div className='flex items-center justify-center'>
+					<button type="button">
+						<GoogleLogin
+							onSuccess={async (credentialResponse) => {
+								try{
+									toast.loading("Logging in...", {id: "login"});
+									const res = await API.post("/auth/google", {
+										token: credentialResponse.credential
+									});
+
+									setUser(res.data.user);
+									toast.success("Login successful", {id: "login"});
+									navigate("/dashboard");
+			
+								}catch(error){
+									console.log(error);
+									toast.error("Login failed", {id: "login"});
+								}
+							}}
+							onError={() => {
+									console.log('Google Login Failed');
+							}}
+						/>
+					</button>
+				</div>
             </form>
 
 			{/* Footer */}

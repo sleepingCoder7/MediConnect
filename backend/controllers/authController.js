@@ -1,7 +1,8 @@
 const User = require("../models/User.model");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const cloudinary = require("../config/cloudinary");
+const verifyGoogleToken = require("../utils/googleAuth");
+const generateJwtToken = require("../utils/generateJWTtoken");
 
 const registerUser = async (req, res) => {
     try {
@@ -29,6 +30,9 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
+        if(user.provider === "google"){
+            return res.status(400).json({ message: "User is registered with Google. Please sign in with Google." });
+        }
         if(!user){
             return res.status(404).json({ message: "User with this email does not exist" });
         }
@@ -39,7 +43,7 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ message: "Incorrect password" });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = generateJwtToken(user._id);
 
         res.cookie("token", token, {
             httpOnly: true,
@@ -148,4 +152,37 @@ const uploadProfilePic = async (req, res) => {
     }
 }
 
-module.exports = { registerUser, loginUser, logoutUser, getMe ,updateUser, uploadProfilePic};
+const googleLogin = async (req, res) => {
+    try {
+        const { token: googleToken } = req.body;
+        const payload = await verifyGoogleToken(googleToken);
+        if(!payload){
+            return res.status(401).json({ message: "Invalid Google token" });
+        }
+        const { email, name, picture } = payload;
+        const user = await User.findOne({ email });
+        if(!user){
+            const newUser = await User.create({ email, name, profilePic: picture, provider: "google" , profile: { firstName: name.split(" ")[0], lastName: name.split(" ")[name.split(" ").length - 1] } });
+            const token = generateJwtToken(newUser._id);
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 3600000
+            });
+            return res.status(201).json({ user: { id: newUser._id, name: newUser.name, email: newUser.email, profile: newUser.profile, address: newUser.address, profilePic: newUser.profilePic } });
+        }
+        const token = generateJwtToken(user._id);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 3600000
+        });
+        res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, profile: user.profile, address: user.address, profilePic: user.profilePic } });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+module.exports = { registerUser, loginUser, logoutUser, getMe ,updateUser, uploadProfilePic, googleLogin };
