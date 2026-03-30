@@ -2,7 +2,7 @@ const User = require("../models/User.model");
 const bcrypt = require("bcryptjs");
 const cloudinary = require("../config/cloudinary");
 const verifyGoogleToken = require("../utils/googleAuth");
-const generateJwtToken = require("../utils/generateJWTtoken");
+const generateJwtToken = require("../utils/generateJwtToken");
 
 const registerUser = async (req, res) => {
     try {
