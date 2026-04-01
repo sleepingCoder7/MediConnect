@@ -137,6 +137,18 @@ describe("Auth Routes", () => {
         expect(response.body.message).toBe("Invalid token");
     })
 
+    it("should handle blocked origin header", async () => {
+        const loginResponse = await request(app).post("/api/auth/login").send({
+            email: testEmail,
+            password: "password"
+        });
+        const cookies = loginResponse.headers["set-cookie"][0];
+        const response = await request(app).get("/api/auth/me").set("Cookie", cookies).set("Origin", "http://localhost:3000");
+        expect(response.statusCode).toBe(403);
+        expect(response.body).toHaveProperty("message");
+        expect(response.body.message).toBe("Blocked by CSRF Protection(Invalid Origin)");
+    })
+
     it("should not login a user if user does not exist", async () => {
         const response = await request(app).post("/api/auth/login").send({
             email: "nonexistent@mail.com",
