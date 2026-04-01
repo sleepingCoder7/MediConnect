@@ -30,11 +30,11 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if(user.provider === "google"){
-            return res.status(400).json({ message: "User is registered with Google. Please sign in with Google." });
-        }
         if(!user){
             return res.status(404).json({ message: "User with this email does not exist" });
+        }
+        if(user.provider === "google"){
+            return res.status(400).json({ message: "User is registered with Google. Please sign in with Google." });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -72,8 +72,12 @@ const logoutUser = async (req, res) => {
 }
 
 const getMe = async (req, res) => {
-    let user = await User.findById(req.user.id).select("-password");
-    res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, profile: user.profile, address: user.address, profilePic: user.profilePic } });
+    try {
+        let user = await User.findById(req.user.id).select("-password");
+        res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, profile: user.profile, address: user.address, profilePic: user.profilePic } });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 }
 
 const updateUser = async (req, res) => {

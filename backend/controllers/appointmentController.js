@@ -114,7 +114,7 @@ const deleteAppointment = async (req, res) => {
         await Appointment.findByIdAndDelete(appointmentId);
 
         if(appointment.reports.length > 0){
-            deleteReportsFromCloudinary(appointment.reports);
+            await deleteReportsFromCloudinary(appointment.reports);
         }
         
         res.status(200).json({ success: true, message: "Appointment cancelled successfully" });

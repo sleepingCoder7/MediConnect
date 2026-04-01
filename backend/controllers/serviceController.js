@@ -2,10 +2,10 @@ const Service = require("../models/Service.model.js");
 
 const getAllServices = async (req, res) => {
   try {
-    const services = await Service.find().sort({ createdAt: -1 });
-    res.status(200).json(services);
+    const services = await Service.find();
+    res.status(200).json({services});
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch services" });
+    res.status(500).json({ message: error.message });
   }
 };
 
