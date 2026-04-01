@@ -62,11 +62,11 @@ const BookAppointment = () => {
         setFormValues({...formValues, phone: e.target.value});
         const value = e.target.value;
         if (!/^[0-9]*$/.test(value)) {
-            setErrors({...errors, "phone": "Phone number must contain only numbers"});
+            setErrors((prev) => ({...prev, "phone": "Phone number must contain only numbers"}));
             return;
         }
         if (value.length < 10) {
-            setErrors({...errors, "phone": "Phone number must be at least 10 digits"});
+            setErrors((prev) => ({...prev, "phone": "Phone number must be at least 10 digits"}));
             return;
         }
         const {phone, ...remainingErrors} = errors;
