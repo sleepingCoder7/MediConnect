@@ -36,12 +36,14 @@ MediConnect is a modern, full-stack web application designed to seamlessly conne
 - **State Management:** [Redux Toolkit](https://redux-toolkit.js.org/) & `react-redux`
 - **HTTP Client:** [Axios](https://axios-http.com/)
 - **Icons & UI:** `react-icons`, `react-hot-toast`
+- **Testing:** [Vitest](https://vitest.dev/), [React Testing Library](https://testing-library.com/)
 
 ### Backend
 - **Framework:** [Node.js](https://nodejs.org/) & [Express 5](https://expressjs.com/)
 - **Database:** [MongoDB](https://www.mongodb.com/) & [Mongoose](https://mongoosejs.com/)
 - **Authentication:** `jsonwebtoken` (JWT), `bcryptjs`, `cookie-parser`, **Google OAuth 2.0**
 - **File Uploads:** `multer`, `cloudinary`
+- **Testing:** [Jest](https://jestjs.io/)
 - **Other utilities:** `dotenv`, `cors`
 
 ---
