@@ -4,6 +4,7 @@ const User = require("../models/User.model");
 const cloudinary = require("../config/cloudinary");
 
 let testEmail = `test${Date.now()}@mail.com`;
+let origin = process.env.FRONTEND_URL;
 
 describe("User Routes", () => {
     it("should update user profile", async () => {
@@ -21,7 +22,7 @@ describe("User Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).put("/api/user/update").set("Cookie", cookies).send({
+        const response = await request(app).put("/api/user/update").set("Cookie", cookies).set("Origin", origin).send({
             firstName: "John",
             lastName: "Doe",
             gender: "Male",
@@ -62,7 +63,7 @@ describe("User Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).put("/api/user/update").set("Cookie", cookies).send({});
+        const response = await request(app).put("/api/user/update").set("Cookie", cookies).set("Origin", origin).send({});
 
         expect(response.statusCode).toBe(404);
         expect(response.body).toHaveProperty("message");
@@ -77,7 +78,7 @@ describe("User Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).put("/api/user/update").set("Cookie", cookies).send({});
+        const response = await request(app).put("/api/user/update").set("Cookie", cookies).set("Origin", origin).send({});
 
         expect(response.statusCode).toBe(500);    
         expect(response.body).toHaveProperty("message");
@@ -94,7 +95,7 @@ describe("User Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).post("/api/user/upload-profile-pic").set("Cookie", cookies).attach("profilePic",Buffer.from("./default.jpg"), "default.jpg");
+        const response = await request(app).post("/api/user/upload-profile-pic").set("Cookie", cookies).set("Origin", origin).attach("profilePic",Buffer.from("./default.jpg"), "default.jpg");
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("user");
         expect(response.body).toHaveProperty("message");
@@ -114,7 +115,7 @@ describe("User Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).post("/api/user/upload-profile-pic").set("Cookie", cookies);
+        const response = await request(app).post("/api/user/upload-profile-pic").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(400);
         expect(response.body).toHaveProperty("message");
         expect(response.body.message).toBe("No file uploaded");
@@ -130,7 +131,7 @@ describe("User Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).post("/api/user/upload-profile-pic").set("Cookie", cookies).attach("profilePic",Buffer.from("./default.jpg"), "default.jpg");
+        const response = await request(app).post("/api/user/upload-profile-pic").set("Cookie", cookies).set("Origin", origin).attach("profilePic",Buffer.from("./default.jpg"), "default.jpg");
         expect(response.statusCode).toBe(500);
         expect(response.body).toHaveProperty("message");
         expect(response.body.message).toBe("File upload failed");

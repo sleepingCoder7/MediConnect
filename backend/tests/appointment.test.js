@@ -11,6 +11,7 @@ let departmentId;
 let appointmentId;
 let testUser1;
 let testUser2;
+const origin = process.env.FRONTEND_URL;
 
 describe("Appointment API", () => {
     beforeAll(async () => {
@@ -38,7 +39,7 @@ describe("Appointment API", () => {
             password: "password",
         });
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).post("/api/appointments").set("Cookie", cookies)
+        const response = await request(app).post("/api/appointments").set("Cookie", cookies).set("Origin", origin)
             .field("departmentId", departmentId.toString())
             .field("date", new Date().toISOString())
             .field("phone", "1234567890")
@@ -57,7 +58,7 @@ describe("Appointment API", () => {
             password: "password",
         });
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).post("/api/appointments").set("Cookie", cookies)
+        const response = await request(app).post("/api/appointments").set("Cookie", cookies).set("Origin", origin)
             .field("departmentId", departmentId.toString())
             .field("date", new Date().toISOString())
             .field("phone", "1234567890")
@@ -77,7 +78,7 @@ describe("Appointment API", () => {
         jest.spyOn(cloudinary.uploader, "upload_stream").mockImplementation((options, callback) => {
             callback(new Error("Cloudinary error"), null);
         });
-        const response = await request(app).post("/api/appointments").set("Cookie", cookies)
+        const response = await request(app).post("/api/appointments").set("Cookie", cookies).set("Origin", origin)
             .field("departmentId", departmentId.toString())
             .field("date", new Date().toISOString())
             .field("phone", "1234567890")
@@ -93,7 +94,7 @@ describe("Appointment API", () => {
             password: "password",
         });
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).get("/api/appointments").set("Cookie", cookies);
+        const response = await request(app).get("/api/appointments").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("success", true);
         expect(response.body).toHaveProperty("data");
@@ -105,7 +106,7 @@ describe("Appointment API", () => {
             password: "password",
         });
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).get("/api/appointments?year=2026").set("Cookie", cookies);
+        const response = await request(app).get("/api/appointments?year=2026").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("success", true);
         expect(response.body).toHaveProperty("data");
@@ -121,7 +122,7 @@ describe("Appointment API", () => {
             populate: jest.fn().mockReturnThis(),
             sort: jest.fn().mockRejectedValueOnce(new Error("Database error")),
         });
-        const response = await request(app).get("/api/appointments").set("Cookie", cookies);
+        const response = await request(app).get("/api/appointments").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(500);
         expect(response.body).toHaveProperty("message");
     })
@@ -134,7 +135,7 @@ describe("Appointment API", () => {
         const cookies = loginResponse.headers["set-cookie"][0];
         const appointment = await Appointment.findOne({ departmentId });
         appointmentId = appointment._id;
-        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies);
+        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("success", true);
         expect(response.body).toHaveProperty("message", "Appointment cancelled successfully");
@@ -147,7 +148,7 @@ describe("Appointment API", () => {
         });
         const cookies = loginResponse.headers["set-cookie"][0];
         const invalidAppointmentId = "692e632289c3131f42b81111";
-        const response = await request(app).delete(`/api/appointments/${invalidAppointmentId}`).set("Cookie", cookies);
+        const response = await request(app).delete(`/api/appointments/${invalidAppointmentId}`).set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(404);
         expect(response.body).toHaveProperty("message", "Appointment not found");
     })
@@ -159,7 +160,7 @@ describe("Appointment API", () => {
         });
         const cookies = loginResponse.headers["set-cookie"][0];
         jest.spyOn(Appointment, "findById").mockRejectedValueOnce(new Error("Database error"));
-        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies);
+        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(500);
         expect(response.body).toHaveProperty("message");
     })
@@ -172,7 +173,7 @@ describe("Appointment API", () => {
         const cookies = loginResponse.headers["set-cookie"][0];
         const appointment = await Appointment.findOne({ departmentId });
         appointmentId = appointment._id;
-        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies);
+        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(403);
         expect(response.body).toHaveProperty("message");
     })
@@ -188,7 +189,7 @@ describe("Appointment API", () => {
         jest.spyOn(cloudinary.uploader, "destroy").mockImplementation((publicId, callback) => {
             callback(new Error("Cloudinary error"), null);
         });
-        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies);
+        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(500);
         expect(response.body).toHaveProperty("message","Cloudinary error");
     })
@@ -220,7 +221,7 @@ describe("Appointment API", () => {
                 result: "ok",
             });
         });
-        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies);
+        const response = await request(app).delete(`/api/appointments/${appointmentId}`).set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("message");
     })

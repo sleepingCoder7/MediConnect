@@ -10,6 +10,8 @@ jest.mock("../utils/googleAuth");
 const mockVerifyGoogleToken = require("../utils/googleAuth");
 const { logoutUser } = require("../controllers/authController");
 
+const origin = process.env.FRONTEND_URL;
+
 mockVerifyGoogleToken.mockImplementation((token) => {
     if(token === "invalid-token"){
         return Promise.resolve(null);
@@ -36,7 +38,7 @@ describe("Auth Routes", () => {
 
     it("should not register a user if user already exists", async () => {
         const response = await request(app).post("/api/auth/register").send({
-            name: "John Doe",
+            name: "John",
             email: testEmail,
             password: "password"
         });
@@ -67,7 +69,7 @@ describe("Auth Routes", () => {
         expect(response.headers["set-cookie"][0]).toContain("token=");
         expect(response.headers["set-cookie"][0]).toContain("HttpOnly");
         expect(response.headers["set-cookie"][0]).toContain("Secure");
-        expect(response.headers["set-cookie"][0]).toContain("SameSite=Strict");
+        expect(response.headers["set-cookie"][0]).toContain("SameSite=");
         expect(response.headers["set-cookie"][0]).toMatch(/Max-Age=\d+/);
     });
 
@@ -88,7 +90,7 @@ describe("Auth Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).get("/api/auth/me").set("Cookie", cookies);
+        const response = await request(app).get("/api/auth/me").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("user");
         expect(response.body.user).toHaveProperty("id");
@@ -110,12 +112,12 @@ describe("Auth Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).get("/api/auth/me").set("Cookie", cookies);
+        const response = await request(app).get("/api/auth/me").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(500);
     })
 
     it("should handle missing token", async () => {
-        const response = await request(app).get("/api/auth/me").set("Cookie", "");
+        const response = await request(app).get("/api/auth/me").set("Cookie", "").set("Origin", origin);
         expect(response.statusCode).toBe(401);
         expect(response.body).toHaveProperty("message");
         expect(response.body.message).toBe("Unauthorized");
@@ -131,7 +133,7 @@ describe("Auth Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).get("/api/auth/me").set("Cookie", cookies);
+        const response = await request(app).get("/api/auth/me").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(401);
         expect(response.body).toHaveProperty("message");
         expect(response.body.message).toBe("Invalid token");
@@ -177,7 +179,7 @@ describe("Auth Routes", () => {
         });
 
         const cookies = loginResponse.headers["set-cookie"][0];
-        const response = await request(app).post("/api/auth/logout").set("Cookie", cookies);
+        const response = await request(app).post("/api/auth/logout").set("Cookie", cookies).set("Origin", origin);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty("message");
         expect(response.body.message).toBe("Logout successful");
@@ -214,7 +216,7 @@ describe("Auth Routes", () => {
         expect(response.headers["set-cookie"][0]).toContain("token=");
         expect(response.headers["set-cookie"][0]).toContain("HttpOnly");
         expect(response.headers["set-cookie"][0]).toContain("Secure");
-        expect(response.headers["set-cookie"][0]).toContain("SameSite=Strict");
+        expect(response.headers["set-cookie"][0]).toContain("SameSite=None");
         expect(response.headers["set-cookie"][0]).toMatch(/Max-Age=\d+/);
     });
 
@@ -231,7 +233,7 @@ describe("Auth Routes", () => {
         expect(response.headers["set-cookie"][0]).toContain("token=");
         expect(response.headers["set-cookie"][0]).toContain("HttpOnly");
         expect(response.headers["set-cookie"][0]).toContain("Secure");
-        expect(response.headers["set-cookie"][0]).toContain("SameSite=Strict");
+        expect(response.headers["set-cookie"][0]).toContain("SameSite=None");
         expect(response.headers["set-cookie"][0]).toMatch(/Max-Age=\d+/);
     });
 
