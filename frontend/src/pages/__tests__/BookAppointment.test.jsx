@@ -55,7 +55,15 @@ describe('BookAppointment Component', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         vi.mocked(useAuth).mockReturnValue({ user: mockUser });
-        vi.mocked(API.get).mockResolvedValue({ data: mockDepartments });
+        vi.mocked(API.get).mockImplementation((url) => {
+            if (url === '/departments') {
+                return Promise.resolve({ data: { departments: mockDepartments } });
+            }
+            if (url === '/auth/me') {
+                return Promise.resolve({ data: { user: mockUser } });
+            }
+            return Promise.resolve({ data: {} });
+        });
     });
 
     const renderComponent = () => render(
@@ -80,6 +88,15 @@ describe('BookAppointment Component', () => {
 
     it('validates phone number on change', async () => {
         const user = userEvent.setup();
+        API.get.mockImplementation((url) => {
+            if (url === '/departments') {
+                return Promise.resolve({ data: { departments: mockDepartments } });
+            }
+            if (url === '/auth/me') {
+                return Promise.resolve({ data: { user: { profile: { phone: '' } } } });
+            }
+            return Promise.resolve({ data: {} });
+        });
         renderComponent();
         
         const phoneInput = screen.getByLabelText('Phone Number');
@@ -153,10 +170,19 @@ describe('BookAppointment Component', () => {
 
     it('prevents submission if there are validation errors', async () => {
         const user = userEvent.setup();
+        API.get.mockImplementation((url) => {
+            if (url === '/departments') {
+                return Promise.resolve({ data: { departments: mockDepartments } });
+            }
+            if (url === '/auth/me') {
+                return Promise.resolve({ data: { user: { profile: { phone: '' } } } });
+            }
+            return Promise.resolve({ data: {} });
+        });
         renderComponent();
         
         const phoneInput = screen.getByLabelText('Phone Number');
-        
+
         await user.clear(phoneInput);
         await user.type(phoneInput, '12ab');
         await screen.findByText(/must contain only numbers/i); 

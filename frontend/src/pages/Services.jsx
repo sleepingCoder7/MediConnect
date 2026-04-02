@@ -32,7 +32,7 @@ const Services = () => {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.length > 0 && services.map((service) => (
+          {services?.length > 0 && services.map((service) => (
             <ServiceCard key={service._id} title={service.name} description={service.description} />
           ))}
         </div>

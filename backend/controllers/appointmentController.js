@@ -1,5 +1,4 @@
 const Appointment = require("../models/Appointment.model.js");
-const fs = require("fs");
 const cloudinary = require("../config/cloudinary.js");
 
 const getAppointments = async (req, res) => {
@@ -17,7 +16,7 @@ const getAppointments = async (req, res) => {
             };
         }
 
-        const appointments = await Appointment.find(filter).populate("departmentId", "name image").sort({ appointmentDate: -1 });
+        const appointments = await Appointment.find(filter).populate("departmentId", "name image").sort({ appointmentDate: 1 });
 
         res.status(200).json({
             success: true,

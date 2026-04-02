@@ -30,6 +30,7 @@ vi.mock('../../components/Sidebar', () => ({
 // Mock axios instance
 vi.mock('../../api/axios', () => ({
     default: {
+        get: vi.fn(),
         put: vi.fn(),
     }
 }));
@@ -210,7 +211,6 @@ describe('Dashboard Component', () => {
         const user = userEvent.setup();
         vi.mocked(useLocation).mockReturnValue({ pathname: '/dashboard/profile' });
         vi.mocked(API.put).mockRejectedValueOnce(new Error('Update failed'));
-        
         renderDashboard();
         
         const saveBtn = screen.getByRole('button', { name: /save changes/i });

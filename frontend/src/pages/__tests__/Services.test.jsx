@@ -63,7 +63,7 @@ describe('Services Component', () => {
             { _id: '2', name: 'Dental Care', description: 'Teeth cleaning and oral care' },
         ];
         
-        vi.mocked(API.get).mockResolvedValueOnce({ data: mockServices });
+        vi.mocked(API.get).mockResolvedValue({ data: { services: mockServices } });
         
         render(<Services />);
         

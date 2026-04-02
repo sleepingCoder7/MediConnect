@@ -74,7 +74,7 @@ describe('MyAppointment Component', () => {
 
     it('fetches appointments on mount and dispatches slice actions', async () => {
         const mockAppts = [
-            { _id: 'a1', appointmentDate: '2026-05-10T10:00:00.000Z', departmentId: { name: 'Cardiology' }, comments: 'Heart check' }
+            { _id: 'a1', appointmentDate: '2026-05-10T10:00:00.000Z', departmentId: { name: 'Cardiology' }, comments: 'Heart checkup' }
         ];
         API.get.mockResolvedValueOnce({ data: { data: mockAppts } });
         

@@ -42,8 +42,7 @@ const Dashboard = () => {
 
     const fetchUser = async () => {
         const response = await API.get("/auth/me");
-        setUser(response.data.user);
-        console.log(response.data.user);
+        setUser(response?.data?.user);
     };
 
     useEffect(() => {

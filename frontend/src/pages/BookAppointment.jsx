@@ -35,7 +35,7 @@ const BookAppointment = () => {
     const fetchUser = async () => {
         const response = await API.get("/auth/me");
         console.log(response.data.user);
-        setFormValues({...formValues, phone: response.data.user?.profile?.phone || ""});
+        setFormValues(prev => ({...prev, phone: response.data.user?.profile?.phone || ""}));
     };
 
     const handleChange = (e) => {
@@ -130,7 +130,7 @@ const BookAppointment = () => {
                 </div>
                 <select id="department" name="department" required value={formValues.department} onChange={handleChange} className={inputClass}>
                     <option value="">Department</option>
-                    {departments.length > 0 && departments.map((department) => (
+                    {departments?.length > 0 && departments.map((department) => (
                         <option key={department._id} value={department._id}>{department.name}</option>
                     ))}
                 </select>
