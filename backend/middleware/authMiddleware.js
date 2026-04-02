@@ -4,12 +4,6 @@ dotenv.config();
 
 const authMiddleware = (req, res, next) => {
     const token = req.cookies.token;
-    const csrfCookie = req.cookies.csrfToken;
-    const csrfHeader = req.headers["X-CSRF-Token"];
-
-    if(!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader){
-        return res.status(403).json({ message: "Blocked by CSRF Protection(Invalid CSRF Token)" });
-    }
 
     if(!token){
         return res.status(401).json({ message: "Unauthorized" });

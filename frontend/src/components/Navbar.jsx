@@ -49,7 +49,7 @@ const Navbar = () => {
     return (
         <nav className="bg-primary text-white flex justify-between items-center px-6 py-3 shadow-md">
             {/* Logo */}
-            <div className={`flex items-center ${isLoggedIn ? "ml-12 " : ""} md:ml-0`}>
+            <div className={`flex items-center ${isLoggedIn ? "ml-12" : "ml-0"} md:ml-0`}>
                 <Link to="/">
                     <img
                         src={"/logo-icon-64.png"}
