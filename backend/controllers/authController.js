@@ -44,12 +44,18 @@ const loginUser = async (req, res) => {
         }
 
         const token = generateJwtToken(user._id);
-
+        const csrfToken = crypto.randomBytes(32).toString("hex");
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 3600000
+        });
+
+        res.cookie("csrfToken", csrfToken, {
+            httpOnly: false,
+            secure: true,
+            sameSite: "none",
         });
 
         res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, profile: user.profile, address: user.address, profilePic: user.profilePic } });
@@ -63,7 +69,12 @@ const logoutUser = async (req, res) => {
         res.clearCookie("token", {
             httpOnly: true,
             secure: true,
-            sameSite: "strict"
+            sameSite: "none"
+        });
+        res.clearCookie("csrfToken", {
+            httpOnly: false,
+            secure: true,
+            sameSite: "none"
         });
         res.status(200).json({ message: "Logout successful" });
     } catch (error) {
@@ -168,20 +179,32 @@ const googleLogin = async (req, res) => {
         if(!user){
             const newUser = await User.create({ email, name, profilePic: picture, provider: "google" , profile: { firstName: name.split(" ")[0], lastName: name.split(" ")[name.split(" ").length - 1] } });
             const token = generateJwtToken(newUser._id);
+            const csrfToken = crypto.randomBytes(32).toString("hex");
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
-                sameSite: "strict",
+                sameSite: "none",
                 maxAge: 3600000
+            });
+            res.cookie("csrfToken", csrfToken, {
+                httpOnly: false,
+                secure: true,
+                sameSite: "none",
             });
             return res.status(201).json({ user: { id: newUser._id, name: newUser.name, email: newUser.email, profile: newUser.profile, address: newUser.address, profilePic: newUser.profilePic } });
         }
         const token = generateJwtToken(user._id);
+        const csrfToken = crypto.randomBytes(32).toString("hex");
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 3600000
+        });
+        res.cookie("csrfToken", csrfToken, {
+            httpOnly: false,
+            secure: true,
+            sameSite: "none",
         });
         res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, profile: user.profile, address: user.address, profilePic: user.profilePic } });
     } catch (error) {
