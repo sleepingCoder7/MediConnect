@@ -8,7 +8,7 @@ const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const firstName = name.split(" ")[0];
-        const lastName = name.split(" ")[name.split(" ").length - 1];
+        const lastName = name.includes(" ") ? name.split(" ")[name.split(" ").length - 1] : "";
 
         const userExists = await User.findOne({ email });
         if(userExists){

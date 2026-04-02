@@ -11,7 +11,19 @@ import { useLocation } from "react-router";
 const Dashboard = () => {
     const { user, setUser } = useAuth();
     const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary";
-    const [formValues, setFormValues] = useState({});
+    const [formValues, setFormValues] = useState({
+        firstName: "",
+        lastName: "",
+        gender: "",
+        dateOfBirth: "",
+        email: "",
+        phone: "",
+        line1: "",
+        line2: "",
+        city: "",
+        state: "",
+        zipcode: "",
+    });
     const [errors, setErrors] = useState({});
     const location = useLocation();
     const showForm = location.pathname === "/dashboard/profile";
@@ -22,6 +34,16 @@ const Dashboard = () => {
             ...prevFormData,
             [e.target.name]: e.target.value,
         }));
+    };
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    const fetchUser = async () => {
+        const response = await API.get("/auth/me");
+        setUser(response.data.user);
+        console.log(response.data.user);
     };
 
     useEffect(() => {

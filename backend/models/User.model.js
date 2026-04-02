@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
         },
         profilePic: {
             type: String,
-            default: "/frontend/src/assets/profileImages/default.jpg",
+            default: "https://res.cloudinary.com/doplslfqq/image/upload/v1775101967/default_toqepi.jpg",
         },
         profile: {
             firstName: String,

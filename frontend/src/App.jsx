@@ -31,7 +31,7 @@ function App() {
     return (
         <BrowserRouter>
             <Toaster position="top-center" />
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen w-fit min-w-full">
                 <Navbar />
                 <main className="grow">
                     <Routes>

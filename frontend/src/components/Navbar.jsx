@@ -5,6 +5,7 @@ import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { FiMenu, FiX } from "react-icons/fi";
+
 const Navbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -48,12 +49,17 @@ const Navbar = () => {
     return (
         <nav className="bg-primary text-white flex justify-between items-center px-6 py-3 shadow-md">
             {/* Logo */}
-            <div className="flex items-center">
+            <div className={`flex items-center ${isLoggedIn ? "ml-12 " : ""} md:ml-0`}>
                 <Link to="/">
+                    <img
+                        src={"/logo-icon-64.png"}
+                        alt="MediConnect"
+                        className="h-12 object-contain md:hidden"
+                    />
                     <img
                         src={logo}
                         alt="MediConnect"
-                        className="h-12 object-contain"
+                        className="h-12 object-contain hidden md:block"
                     />
                 </Link>
             </div>
