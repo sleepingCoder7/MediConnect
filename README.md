@@ -1,4 +1,14 @@
-# 🏥 MediConnect
+# <img src="./frontend/public/logo-icon-64.png" alt="MediConnect Logo" align="center" /> MediConnect
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Redux](https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=redux&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+
+---
 
 MediConnect is a modern, full-stack web application designed to seamlessly connect patients with healthcare services. Built with the **MERN** stack (MongoDB, Express, React, Node.js), it provides a secure and intuitive platform for users to manage their health appointments, view available services, and securely upload medical documents.
 
