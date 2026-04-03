@@ -18,8 +18,10 @@ const Navbar = () => {
     useEffect(() => {
         if (!loading && user) {
             setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
         }
-    }, [location]);
+    }, [location, user, loading]);
 
     const handleLogout = async () => {
         toast.loading('Logging out...', {
