@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
             firstName: String,
             lastName: String,
             phone: { type: Number },
-            gender: { type: String, enum: ["Male", "Female"] },
+            gender: { type: String, enum: ["Male", "Female", ""] },
             dateOfBirth: Date,
         },
         address: {
