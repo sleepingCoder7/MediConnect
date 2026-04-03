@@ -94,7 +94,10 @@ const MyAppointment = () => {
 										<p><strong>Reports:</strong></p>
 										{appointment.reports?.length > 0 ? (
 											appointment.reports.map((report) => (
-												<a className='text-blue-500 underline break-all' key={report._id} href={report.url} target="_blank" rel="noreferrer">{report.public_id?.split("/")?.pop() || 'View Report'}</a>
+												<>
+													<a className='text-blue-500 underline break-all' key={report._id} href={report.url} target="_blank" rel="noreferrer">{report.public_id?.split("/")?.pop() || 'View Report'}</a>
+													<br />
+												</>
 											))
 										) : (
 											<p>No reports found</p>
